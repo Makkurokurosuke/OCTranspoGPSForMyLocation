@@ -34,11 +34,14 @@ Step 3: Press the my location button on the top right corner. (It will get your 
 
 
 Step 4: Select bus routes and press the Search button.
+
+
 ![screen shot of the map](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_4.png)
 
 
 Step 5: 
 ![screen shot of the map](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_5.png)
+
 
 
 <b>Data and technology used in the application</b>
