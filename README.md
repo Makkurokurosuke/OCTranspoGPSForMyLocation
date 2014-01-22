@@ -9,7 +9,7 @@ but I couldn't find any apps that allow us to search more than one bus route at 
 
 So, I created this for my convenience.
 
-Note: Google API key and Octranspo API key are removed from the source code. 
+Note: Google API key and OC Transpo API key are removed from the source code. 
 
 
 How to use the app.
@@ -39,7 +39,9 @@ Step 4: Select bus routes and press the Search button.
 ![screen shot of the map](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_4.png)
 
 
-Step 5: 
+Step 5: Now you see a list of bus route schedules. You can know which one comes first.
+
+
 ![screen shot of the map](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_5.png)
 
 
@@ -56,7 +58,7 @@ Step 5:
 
 
 
-My Future plan - There is still a lot to add and fix. 
+My future plan - There is still a lot to add and fix. 
 <ul>
 <li>Add better exception error handling</li>
 <li>Add an option to keep updaing the result every minute for the next 5 minutes</li>
