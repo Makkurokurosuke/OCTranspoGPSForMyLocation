@@ -13,7 +13,11 @@ Note: Google API key and Octranspo API key are removed from the source code.
 
 
 How to use the app.
+
+
 Step 1: Click the bus icon.
+
+
 ![screen shot of the appliation icon](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_1.png)
 
 
