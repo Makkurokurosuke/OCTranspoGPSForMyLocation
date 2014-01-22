@@ -32,10 +32,13 @@ Select bus routes and press the Search button.
 ![screen shot of the map](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_5.png)
 
 
-Data and technology used in the application
+<b>Data and technology used in the application</b>
 -------------------------------------------
-Java, Google Map v2, Android 4.0
-OC Transpo Live Next Bus Arrival Data Feed API
-OC Transpo Schedules
+<ul>
+<li>Java</li>
+<li>Google Map v2</li>
+<li>pears</li>
+</ul>
+, , Android 4.0, OC Transpo Live Next Bus Arrival Data Feed API, OC Transpo Schedules
 Bus stop
 SQLite
