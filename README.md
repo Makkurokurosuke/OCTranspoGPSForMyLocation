@@ -33,12 +33,12 @@ Select bus routes and press the Search button.
 
 
 <b>Data and technology used in the application</b>
--------------------------------------------
 <ul>
 <li>Java</li>
 <li>Google Map v2</li>
-<li>pears</li>
+<li>Android 4.0</li>
+<li>OC Transpo Live Next Bus Arrival Data Feed API</li>
+<li>OC Transpo Schedules</li>
+<li>SQLite</li>
 </ul>
-, , Android 4.0, OC Transpo Live Next Bus Arrival Data Feed API, OC Transpo Schedules
-Bus stop
-SQLite
+
