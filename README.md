@@ -17,8 +17,8 @@ Step 1: Click the bus icon.
 ![screen shot of the appliation icon](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_1.png)
 
 
-Step 2: Press Search by your location.
-![screen shot of the menu](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_2.png)
+<p>Step 2: Press Search by your location.</p>
+<p>![screen shot of the menu](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_2.png)</p>
 
 
 Step 3: Press the my location button on the top right corner. (It will get your location without pressing the button, but it takes time.) Press a bus stop marker.
