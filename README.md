@@ -58,7 +58,7 @@ Step 5: Now you see a list of bus route schedules. You can know which one comes 
 
 
 
-My future plan - There is still a lot to add and fix. 
+<b>My future plan - There is still a lot to add and fix.</b>
 <ul>
 <li>Add better exception error handling</li>
 <li>Add an option to keep updaing the result every minute for the next 5 minutes</li>
