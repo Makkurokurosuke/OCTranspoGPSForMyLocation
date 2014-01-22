@@ -33,7 +33,7 @@ Select bus routes and press the Search button.
 
 
 Data and technology used in the application
-=========================
+-------------------------------------------
 Java, Google Map v2, Android 4.0
 OC Transpo Live Next Bus Arrival Data Feed API
 OC Transpo Schedules
