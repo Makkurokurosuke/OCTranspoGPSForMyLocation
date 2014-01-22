@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">OCTranspoGPS</string>
+    <string name="action_settings">Settings</string>
+    <string name="search">Search</string>
+    <string name="title_activity_search_by_stop_id">SearchByStopIDActivity</string>
+    <string name="bus_stop_hint">Enter bus stop #</string>
+    <string name="route_summary_URL">https://api.octranspo1.com/v1.1/GetRouteSummaryForStop</string>
+    <string name="next_trip_URL">https://api.octranspo1.com/v1.1/GetNextTripsForStop</string>
+    <string name="ocAppID"></string>
+    <string name="ocAppKey"></string>    
+    </resources>
