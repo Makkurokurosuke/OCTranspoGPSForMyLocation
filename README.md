@@ -7,28 +7,29 @@ OCTranspoGPSForMyLocation
 There are already many nice applications to track Ottawa buses, 
 but I couldn't find any apps that allow us to search more than one bus route at the same time. 
 
-So, I created this for my convenience. There is still a lot to add and fix.
+So, I created this for my convenience.
+
+Note: Google API key and Octranspo API key are removed from the source code. 
 
 
-
-Click the bus icon.
-
+How to use the app.
+Step 1: Click the bus icon.
 ![screen shot of the appliation icon](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_1.png)
 
-Press Search by your location.
 
+Step 2: Press Search by your location.
 ![screen shot of the menu](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_2.png)
 
 
-Press the my location button on the top right corner. (It will get your location without pressing the button, but it takes time.) Press a bus stop marker.
-
+Step 3: Press the my location button on the top right corner. (It will get your location without pressing the button, but it takes time.) Press a bus stop marker.
 ![screen shot of the map](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_3.png)
 
-Select bus routes and press the Search button.
 
+Step 4: Select bus routes and press the Search button.
 ![screen shot of the map](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_4.png)
 
 
+Step 5: 
 ![screen shot of the map](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_5.png)
 
 
@@ -42,3 +43,13 @@ Select bus routes and press the Search button.
 <li>SQLite</li>
 </ul>
 
+
+
+My Future plan - There is still a lot to add and fix. 
+<ul>
+<li>Add better exception error handling</li>
+<li>Add an option to keep updaing the result every minute for the next 5 minutes</li>
+<li>Add a loading message while processing</li>
+<li>Update bus stop location, because it may be old</li>
+<li>Test more</li>
+</ul>
