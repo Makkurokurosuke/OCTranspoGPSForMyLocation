@@ -21,7 +21,7 @@ Step 1: Click the bus icon.
 ![screen shot of the appliation icon](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_1.png)
 
 
-Step 2: Press Search by your location.
+Step 2: Press Search by my location.
 
 
 ![screen shot of the menu](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_2.png)
