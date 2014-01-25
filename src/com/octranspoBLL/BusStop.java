@@ -5,16 +5,22 @@ import java.util.List;
 
 public class BusStop {
 
-		public String StopName;
-		public String StopCode;
-		public List <String> Routes;
+		private String mStopName;
+		private String mStopCode;
+		private List <String> mRoutes;
 
 
 		public BusStop () {
-			StopName = "";
-			StopCode ="";
-			Routes = new ArrayList <String>();
+			mStopName = "";
+			mStopCode ="";
+			mRoutes = new ArrayList <String>();
 		}
 
-
+		public String getStopName(){
+			return this.mStopName ;
+		}
+		
+		public String getStopCode(){
+			return this.mStopName;
+		}
 }
