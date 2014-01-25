@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -23,14 +23,18 @@ public class DbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 	// create Item table
+		createStops(db);
+	}
+
+	public void createStops(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE STOPS (stop_id TEXT PRIMARY KEY, stop_code TEXT, stop_name TEXT, stop_desc TEXT, stop_lat REAL, stop_lon REAL)");
 		insertStopsData(db);
 	}
-
+	
 	public void droptableStops(SQLiteDatabase db) {
 		// create Item table
 			db.execSQL("DROP TABLE IF EXISTS STOPS");
-		}
+	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -62,6 +66,16 @@ public class DbHelper extends SQLiteOpenHelper {
 		db.endTransaction();
 	}
 
-
+	public boolean isTableExists(String tableName, SQLiteDatabase mDatabase) {
+	    android.database.Cursor cursor = mDatabase.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+tableName+"'", null);
+	    if(cursor!=null) {
+	        if(cursor.getCount()>0) {
+	                            cursor.close();
+	            return true;
+	        }
+	                    cursor.close();
+	    }
+	    return false;
+	}
 
 }

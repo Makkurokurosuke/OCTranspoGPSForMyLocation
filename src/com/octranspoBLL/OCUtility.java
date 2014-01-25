@@ -1,5 +1,7 @@
 package com.octranspoBLL;
 
+
+
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
@@ -12,6 +14,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.Paint.Style;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 
 public class OCUtility {
@@ -83,7 +87,11 @@ public BitmapDescriptor textAsBitmap(String text) {
 	canvas.drawText(text, 0, baseline, paint);
 	BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(image);
 	return icon;
-}}
+}
+
+
+
+}
 
 
 

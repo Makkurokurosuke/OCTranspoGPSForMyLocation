@@ -1,7 +1,5 @@
 package com.octranspogps;
 
-import java.util.Date;
-
 
 
 import com.octranspoBLL.OCUtility;
@@ -20,7 +18,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import net.wakame.octranspodb.db.DbHelper;
 import net.wakame.octranspodb.db.StopsDao;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -41,6 +38,7 @@ public class DisplayMapActivity extends FragmentActivity {
 	GoogleMap map;
 	DbHelper mDbHelper;
 	final Context self = this;
+	boolean startListActivity = false;
 	private static final String LOG_TAG = "DisplayMapActivity";
 
 	@Override
@@ -55,12 +53,12 @@ public class DisplayMapActivity extends FragmentActivity {
 				Log.e(LOG_TAG,
 						"Uncaught Exception! - "
 								+ OCUtility.getErrorMessage(paramThrowable));
-				finish();
+				
 			}
 		});
 
 		setContentView(R.layout.activity_main);
-		handleMyLocation();
+		//handleMyLocation();
 	}
 
 	private void displayMap(String provider, LocationManager locationManager) {
@@ -94,10 +92,10 @@ public class DisplayMapActivity extends FragmentActivity {
 		// zoom to the last known/current location
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 18));
 		
-		// register Listner for My Location button clicked event
+		// register Listener for My Location button clicked event
 		createMapMyLocationBtnClickLister();
 		
-		// set Listner to re-create markers when the map location is moved
+		// set Listener to re-create markers when the map location is moved
 		map.setOnCameraChangeListener(getCameraChangeListener());
 	}
 
@@ -150,6 +148,7 @@ public class DisplayMapActivity extends FragmentActivity {
 				if (id.length > 0) {
 					intent.putExtra("stopId", Long.valueOf(id[0]));
 					try {
+						startListActivity = true;
 						startActivity(intent);
 					} finally {
 					}
@@ -186,18 +185,35 @@ public class DisplayMapActivity extends FragmentActivity {
 		alert.show();
 	}
 
-	public void onDestroy(Bundle savedInstanceState) {
+	@Override
+	protected void onStart() {
+		super.onStart();
+		 Log.i("Map.OnStart is called", "");
+	}
+	
+	@Override
+	  public void onResume() {
+	     super.onResume();
+	     handleMyLocation();
+	     Log.i("Map.OnResume is called", "");
+	  }
+	
+	@Override
+	public void onRestart() {
+		super.onRestart();
+		 Log.i("Map.OnRestart is called", "");
+	}
+	
+	@Override
+	protected void onStop() {
+	    super.onStop(); 
+	    Log.i("Map.OnStop is called", "");
+	}
+	
+	@Override
+	protected void onDestroy() {
 		super.onDestroy();
-		mDbHelper = new DbHelper(this);
-		mDbHelper.droptableStops(mDbHelper.getWritableDatabase());
-		mDbHelper.close();
-
-		Date d = new Date();
-		Log.i("OnDestory is called", d.toString());
-		finish();
-		ActivityManager manager = (ActivityManager)
-		        getSystemService(Context.ACTIVITY_SERVICE);
-		manager.restartPackage(getPackageName());
+		Log.i("OnDestory is called", "");
 	}
 
 	/* Create Marker for each bus stop on Map */
@@ -208,7 +224,14 @@ public class DisplayMapActivity extends FragmentActivity {
 		
 		/* Get list of bus stop's Longitude and Latitude */
 		mDbHelper = new DbHelper(this);
+
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		
+		//user clear the data, but the DB still exists. Need to re-populate the data
+		if(!mDbHelper.isTableExists("STOPS", db)){
+			mDbHelper.createStops(db);
+		};
+		
 		Cursor c = StopsDao.getStopsByLonLat(db, currentPosition.latitude,
 				currentPosition.longitude, 0.0025);//0.01
 
@@ -260,8 +283,7 @@ public class DisplayMapActivity extends FragmentActivity {
 			if (provider != null) {
 				displayMap(provider, locationManager);
 			} else {
-				/* Network Provider service and Google location service
-				 * need to be enabled.  */
+				/* Location service needs to be enabled  */
 				displayEnableNetworkProviderDialog();
 			}
 		}

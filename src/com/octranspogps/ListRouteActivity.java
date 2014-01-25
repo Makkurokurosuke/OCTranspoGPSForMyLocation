@@ -32,11 +32,16 @@ import com.octranspoBLL.BusStop;
 import com.octranspoBLL.OCUtility;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import net.wakame.octranspodb.db.DbHelper;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.util.Log;
@@ -50,9 +55,9 @@ public class ListRouteActivity extends Activity {
     private static final String route = "Route", routeNo = "RouteNo",    direction = "DirectionID", routeHeading = "RouteHeading";
     private static final String LOG_TAG = "ListRouteActivity";
     ListAdapter boxAdapter;
-    ArrayList<Bus> listOfBus = new ArrayList<Bus>();
+    ArrayList<Bus> listOfBus;
     long busStopCode;
-    BusStop aBusStop = new BusStop();
+    BusStop aBusStop;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +67,19 @@ public class ListRouteActivity extends Activity {
 	        @Override
 	        public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
 	        	Log.e(LOG_TAG, "Uncaught Exception! - " + OCUtility.getErrorMessage(paramThrowable));
-		        finish();
+		        
 	        }
 	});
-        displayRoutesList();
-		
+
+  
 	}
 	
 	/* Get the selected bus id and get list of bus route numbers from OC Transpo */
 	private void displayRoutesList() {
 		// TODO Auto-generated method stub
+		listOfBus = new ArrayList<Bus>();
+		aBusStop = new BusStop();
+		 
 		  StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 			StrictMode.setThreadPolicy(policy); 
 	        busStopCode = getIntent().getLongExtra("stopId", -1);
@@ -96,6 +104,7 @@ public class ListRouteActivity extends Activity {
 				try {
 					
 					post.setEntity(new UrlEncodedFormEntity(pairs));
+					//If Internet is disabled, UnknownHostException occurs here.
 					HttpResponse response = client.execute(post);
 					HttpEntity r_entity = response.getEntity();
 			        String xmlString = EntityUtils.toString(r_entity, "UTF-8");
@@ -169,7 +178,17 @@ public class ListRouteActivity extends Activity {
 			}
 	}
 
-	  
+	/* Check if network is available */
+	public boolean isOnline() {
+	    ConnectivityManager cm =
+	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	        return true;
+	    }
+	    return false;
+	}
+	
 	/* OnClick Search button event */
 	public void showResult(View v) {
 		  List<String> routesList = new ArrayList<String>();
@@ -206,4 +225,30 @@ public class ListRouteActivity extends Activity {
 	public void onDestroy(Bundle savedInstanceState) {
 			super.onDestroy();
 	}
+
+	@Override
+	  public void onResume() {
+	     super.onResume();
+	     
+	     if(!isOnline() ){
+	    	 //network is not available
+	    	 //show dialog and return to list activity
+	    	 AlertDialog.Builder builder = new AlertDialog.Builder(self);
+	 		builder.setMessage("Network Provider is not available. Enable the location setting.");
+	 		builder.setCancelable(false)
+	 				.setPositiveButton(android.R.string.ok,
+	 						new DialogInterface.OnClickListener() {
+	 							public void onClick(DialogInterface dialog,
+	 									int which) {
+	 							 	 startActivity(new Intent(self, ListActivityMain.class));
+	 							}
+	 						});
+	 		builder.create().show();
+	     }
+	     else{
+	      displayRoutesList();
+	      }
+	     Log.i("Map.OnResume is called", "");
+	  }
+
 }

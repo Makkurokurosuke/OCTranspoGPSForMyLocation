@@ -3,8 +3,6 @@ package com.octranspogps;
 import net.wakame.octranspodb.db.DbHelper;
 import net.wakame.octranspodb.db.StopsDao;
 
-//import com.google.android.gms.maps.model.LatLng;
-//import com.google.android.gms.maps.model.MarkerOptions;
 import com.octranspoBLL.OCUtility;
 
 import android.os.Bundle;
@@ -34,7 +32,7 @@ public class SearchByStopIDActivity extends Activity {
 				Log.e(LOG_TAG,
 						"Uncaught Exception! - "
 								+ OCUtility.getErrorMessage(paramThrowable));
-				finish();
+				
 			}
 		});
 	}
@@ -76,11 +74,22 @@ public class SearchByStopIDActivity extends Activity {
 		super.onDestroy();
 
 }
+	
+	@Override
+	  public void onResume() {
+	     super.onResume();
+	     Log.i("OnResume is called", "");
+	  }
+	
 	private boolean isValidBusStop(String pBusStopId) {
 		boolean isValid = false;
 
 		DbHelper mDbHelper = new DbHelper(this);
 		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		//user clear the data, but the DB still exists. Need to re-populate the data
+		if(!mDbHelper.isTableExists("STOPS", db)){
+			mDbHelper.createStops(db);
+		};
 		Cursor c = StopsDao.getStopsByCode(db, pBusStopId);
 		//if the bus stop exists in the DB, return true
 		if (c.getCount() > 0) {

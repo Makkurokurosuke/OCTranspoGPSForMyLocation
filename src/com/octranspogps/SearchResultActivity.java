@@ -36,12 +36,17 @@ import com.octranspoBLL.OCUtility;
 import android.widget.TableRow.LayoutParams;
 import net.wakame.octranspodb.db.DbHelper;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -60,28 +65,7 @@ public class SearchResultActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-				.permitAll().build();
-		StrictMode.setThreadPolicy(policy);
 
-		long busStopCode = getIntent().getLongExtra("stopId", -1);
-		ArrayList<String> routesList = getIntent().getStringArrayListExtra(
-				"routes");
-
-		if (busStopCode == -1) {
-			// Error
-			new OCUtility().showErrorMsg(this, "Error: Buss top is null.");
-		} else {
-
-			getBusResult(busStopCode, routesList);
-			setContentView(R.layout.table);
-			tl = (TableLayout) findViewById(R.id.maintable);
-			addHeaders();
-			addData(aBusList);
-
-			TextView searchTitle = (TextView) findViewById(R.id.searchPageTitle);
-			searchTitle.setText(getIntent().getExtras().getString("stopName"));
-		}
 	}
 
 	private void getBusResult(long busStopCode, ArrayList<String> routesList) {
@@ -190,9 +174,9 @@ public class SearchResultActivity extends Activity {
 								String destinations[] = strTripDestination
 										.split("/");
 
-							aBusList.add(new Bus(routeNum[0], Integer
-									.parseInt(inMins), destinations[0].trim(),
-									false, ""));
+								aBusList.add(new Bus(routeNum[0], Integer
+										.parseInt(inMins), destinations[0]
+										.trim(), false, ""));
 							} catch (UnsupportedEncodingException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -215,13 +199,13 @@ public class SearchResultActivity extends Activity {
 		tr = new TableRow(this);
 
 		/** Creating a TextView (Route) to add to the row **/
-		tr.addView(createHeaderTextView("Route",0f));
+		tr.addView(createHeaderTextView("Route", 0f));
 
 		/** Creating textview (Time) **/
-		tr.addView(createHeaderTextView("Time",0f));
+		tr.addView(createHeaderTextView("Time", 0f));
 
 		/** Creating textview (Destination) **/
-		tr.addView(createHeaderTextView("Destination",1f));
+		tr.addView(createHeaderTextView("Destination", 1f));
 
 		// Add the TableRow to the TableLayout
 		tl.addView(tr, new TableLayout.LayoutParams(LayoutParams.FILL_PARENT,
@@ -229,16 +213,16 @@ public class SearchResultActivity extends Activity {
 
 	}
 
-	private View createHeaderTextView(String header,float weigh) {
+	private View createHeaderTextView(String header, float weigh) {
 		TextView aTextView = new TextView(this);
 		aTextView.setText(header);
 		aTextView.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-		if (weigh == 0 ){
-			aTextView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-					LayoutParams.FILL_PARENT));
-		}else{
-			aTextView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-					LayoutParams.FILL_PARENT,weigh));
+		if (weigh == 0) {
+			aTextView.setLayoutParams(new LayoutParams(
+					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		} else {
+			aTextView.setLayoutParams(new LayoutParams(
+					LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT, weigh));
 		}
 
 		aTextView.setPadding(10, 10, 10, 10);
@@ -257,14 +241,15 @@ public class SearchResultActivity extends Activity {
 
 			/** Creating a TextView to add to the row **/
 			tr.addView(getTDTextView(aBus.RouteNo, 0f)); // Adding textView to
-														// tablerow.
+															// tablerow.
 
 			/** Creating Time textview **/
-			tr.addView(getTDTextView("In "
-					+ Integer.toString(aBus.AdjustedScheduleTime) + " mins  ",0f));
+			tr.addView(getTDTextView(
+					"In " + Integer.toString(aBus.AdjustedScheduleTime)
+							+ " mins  ", 0f));
 
 			/** Creating another textview **/
-			tr.addView(getTDTextView(aBus.Destination,1f));
+			tr.addView(getTDTextView(aBus.Destination, 1f));
 
 			// Add the TableRow to the TableLayout
 			tl.addView(tr, new TableLayout.LayoutParams(
@@ -273,16 +258,16 @@ public class SearchResultActivity extends Activity {
 
 	}
 
-	private View getTDTextView(String routeNo,float weigh) {
+	private View getTDTextView(String routeNo, float weigh) {
 		TextView tv = new TextView(this);
 		tv.setText(routeNo);
-		
-		if (weigh == 0 ){
+
+		if (weigh == 0) {
 			tv.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
 					LayoutParams.FILL_PARENT));
-		}else{
+		} else {
 			tv.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-					LayoutParams.FILL_PARENT,weigh));
+					LayoutParams.FILL_PARENT, weigh));
 		}
 
 		tv.setPadding(10, 10, 10, 10);
@@ -308,5 +293,61 @@ public class SearchResultActivity extends Activity {
 	public void onDestroy(Bundle savedInstanceState) {
 		super.onDestroy();
 
-}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if (!isOnline()) {
+			// network is not available
+			// show dialog and return to list activity
+			AlertDialog.Builder builder = new AlertDialog.Builder(self);
+			builder.setMessage("Network Provider is not available. Enable the location setting.");
+			builder.setCancelable(false).setPositiveButton(android.R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							startActivity(new Intent(self,
+									ListActivityMain.class));
+						}
+					});
+			builder.create().show();
+		} else {
+			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+					.permitAll().build();
+			StrictMode.setThreadPolicy(policy);
+
+			long busStopCode = getIntent().getLongExtra("stopId", -1);
+			ArrayList<String> routesList = getIntent().getStringArrayListExtra(
+					"routes");
+
+			if (busStopCode == -1) {
+				// Error
+				new OCUtility().showErrorMsg(this, "Error: Buss top is null.");
+			} else {
+
+				getBusResult(busStopCode, routesList);
+				setContentView(R.layout.table);
+				tl = (TableLayout) findViewById(R.id.maintable);
+				addHeaders();
+				addData(aBusList);
+
+				TextView searchTitle = (TextView) findViewById(R.id.searchPageTitle);
+				searchTitle.setText(getIntent().getExtras().getString(
+						"stopName"));
+			}
+		}
+		Log.i("Map.OnResume is called", "");
+	}
+
+	/* Check if network is available */
+	public boolean isOnline() {
+	    ConnectivityManager cm =
+	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	        return true;
+	    }
+	    return false;
+	}
 }
