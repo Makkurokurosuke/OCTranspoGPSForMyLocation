@@ -5,9 +5,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.octranspoBLL.BusStop;
+
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -76,6 +84,57 @@ public class DbHelper extends SQLiteOpenHelper {
 	                    cursor.close();
 	    }
 	    return false;
+	}
+
+	public  List<BusStop> getBusStopsNearLocation(double left, double top, double right, double  bottom) {
+		
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		//user clear the data, but the DB still exists. Need to re-populate the data
+		if(!isTableExists("STOPS", db)){
+			this.createStops(db);
+		};
+		
+		Cursor c = StopsDao.getStopsByLonLat(db,  left,  top, right,  bottom);
+		List<BusStop> busStops = new ArrayList<BusStop>();
+		if (c.moveToFirst()) {
+			do {
+				BusStop aBusStop = new BusStop();
+				aBusStop.setStopName(c.getString(c
+						.getColumnIndex(StopsDao.COL_STOP_NAME)));
+				aBusStop.setStopCode(c.getString(c
+						.getColumnIndex(StopsDao.COL_STOP_CODE)));
+				aBusStop.setLatitude(c.getDouble(c
+						.getColumnIndex(StopsDao.COL_STOP_LAT)));
+				aBusStop.setLongitude( c.getDouble(c
+						.getColumnIndex(StopsDao.COL_STOP_LON)));
+				
+				busStops.add(aBusStop);
+			} while (c.moveToNext());
+		}
+		this.close();
+		return busStops ;
+	}
+
+	public boolean isValidBusStop(String pBusStopId) {
+		boolean isValid = false;
+
+		SQLiteDatabase db = getReadableDatabase();
+		//user clear the data, but the DB still exists. Need to re-populate the data
+		if(! isTableExists("STOPS", db)){
+			createStops(db);
+		};
+		
+		Cursor c = StopsDao.getStopsByCode(db, pBusStopId);
+		
+		//if the bus stop exists in the DB, return true
+		
+		if (c.getCount() > 0) {
+			isValid = true;
+		}
+		close();
+		
+		return isValid;
 	}
 
 }

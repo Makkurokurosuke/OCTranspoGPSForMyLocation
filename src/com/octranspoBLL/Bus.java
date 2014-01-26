@@ -7,27 +7,22 @@ private Integer mAdjustedScheduleTime;
 private String 	mDestination;
 private boolean mSearchflag;
 private String 	mDirection;
-private Double 	mLongtitude;
-private Double 	mLatitude;
+
 
 public Bus() {
 	mRouteNo = "";
 	mAdjustedScheduleTime = 0;
 	mDestination = "";
 	mDirection = "";
-	mLongtitude = 0.0;
-	mLatitude = 0.0;
 }
 
 public Bus (String pRouteNo, Integer pArrivingTime, String pDestination, boolean pSearchflag, 
-	String pDirection, Double pLongititude, Double pLatitude) {
+	String pDirection) {
     mRouteNo = pRouteNo;
     mAdjustedScheduleTime = pArrivingTime;
     mDestination = pDestination;
 	mSearchflag = pSearchflag; 
 	mDirection = pDirection;
-	mLongtitude = pLongititude;
-	mLatitude = pLatitude;
 }
 
 
@@ -56,4 +51,18 @@ public String getDestination(){
 	return this.mDestination;
 }
 
+public void setRouteNo(String pRouteNo){
+	this.mRouteNo = pRouteNo;
+}
+public void setDestination(String pDestination){
+	this.mDestination = pDestination;
+}
+
+public void setDirection(String pDirection){
+	this.mDirection = pDirection;
+}
+
+public  Integer getAdjustedScheduleTime(){
+	return this.mAdjustedScheduleTime ;
+}
 }

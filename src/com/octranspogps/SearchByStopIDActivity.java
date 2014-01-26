@@ -1,7 +1,6 @@
 package com.octranspogps;
 
 import net.wakame.octranspodb.db.DbHelper;
-import net.wakame.octranspodb.db.StopsDao;
 
 import com.octranspoBLL.OCUtility;
 
@@ -9,16 +8,14 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 
 public class SearchByStopIDActivity extends Activity {
-	final Context self = this;
-	final String LOG_TAG = "SearchByStopIDActivity";
+	private final Context self = this;
+	private final String LOG_TAG = "SearchByStopIDActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,21 +79,9 @@ public class SearchByStopIDActivity extends Activity {
 	  }
 	
 	private boolean isValidBusStop(String pBusStopId) {
-		boolean isValid = false;
-
+		
 		DbHelper mDbHelper = new DbHelper(this);
-		SQLiteDatabase db = mDbHelper.getReadableDatabase();
-		//user clear the data, but the DB still exists. Need to re-populate the data
-		if(!mDbHelper.isTableExists("STOPS", db)){
-			mDbHelper.createStops(db);
-		};
-		Cursor c = StopsDao.getStopsByCode(db, pBusStopId);
-		//if the bus stop exists in the DB, return true
-		if (c.getCount() > 0) {
-			isValid = true;
-		}
-		mDbHelper.close();
+		return mDbHelper.isValidBusStop(pBusStopId);
 
-		return isValid;
 	}
 }

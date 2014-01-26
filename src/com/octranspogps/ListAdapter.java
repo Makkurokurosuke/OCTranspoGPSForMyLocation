@@ -15,9 +15,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 public class ListAdapter extends BaseAdapter {
-    Context ctx;
-    LayoutInflater lInflater;
-    ArrayList<Bus> objects;
+    private Context ctx;
+    private LayoutInflater lInflater;
+    private ArrayList<Bus> objects;
 
     ListAdapter(Context context, ArrayList<Bus> buses) {
         ctx = context;
@@ -51,16 +51,16 @@ public class ListAdapter extends BaseAdapter {
         Bus p = getBus(position);
 
         String abound = "Westbound";
-        if (p.Direction.equals("0")){
+        if (p.getDirection().equals("0")){
         	abound = "Eastbound";
         }
-        ((TextView) view.findViewById(R.id.tvDescr)).setText(p.RouteNo + " "+ p.Destination + "");
+        ((TextView) view.findViewById(R.id.tvDescr)).setText(p.getRouteNo() + " "+ p.getDestination() + "");
         ((TextView) view.findViewById(R.id.tvBound)).setText(abound);
        
         CheckBox cbBuy = (CheckBox) view.findViewById(R.id.cbBox);
         cbBuy.setOnCheckedChangeListener(myCheckChangList);
         cbBuy.setTag(position);
-        cbBuy.setChecked(p.Searchflag);
+        cbBuy.setChecked(p.getSearchflag());
         return view;
     }
 
@@ -71,7 +71,7 @@ public class ListAdapter extends BaseAdapter {
     ArrayList<Bus> getSearchFlag() {
         ArrayList<Bus> busList = new ArrayList<Bus>();
         for (Bus p : objects) {
-            if (p.Searchflag)
+            if (p.getSearchflag())
                 busList.add(p);
         }
         return busList;
@@ -80,7 +80,7 @@ public class ListAdapter extends BaseAdapter {
     OnCheckedChangeListener myCheckChangList = new OnCheckedChangeListener() {
         public void onCheckedChanged(CompoundButton buttonView,
                 boolean isChecked) {
-            getBus((Integer) buttonView.getTag()).Searchflag = isChecked;
+            getBus((Integer) buttonView.getTag()).setSearchflag(isChecked);
         }
     };
 }

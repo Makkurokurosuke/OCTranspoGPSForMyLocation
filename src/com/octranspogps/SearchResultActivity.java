@@ -34,9 +34,9 @@ import com.octranspoBLL.BusStop;
 import com.octranspoBLL.OCUtility;
 
 import android.widget.TableRow.LayoutParams;
-import net.wakame.octranspodb.db.DbHelper;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,38 +44,43 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 public class SearchResultActivity extends Activity {
-	DbHelper mDbHelper;
-	final Context self = this;
+
+	private final Context self = this;
 	private static final String tripDestination = "TripDestination",
 			adjustedScheduleTime = "AdjustedScheduleTime";
 	private TableLayout tl;
 	private TableRow tr;
-
-	List<Bus> aBusList;
-
+	private boolean isFromCreate;
+	private List<Bus> aBusList;
+	private ProgressDialog progress;
+	private long busStopCode;
+	private ArrayList<String> routesList ;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		isFromCreate = true;
 	}
 
-	private void getBusResult(long busStopCode, ArrayList<String> routesList) {
+	private void getBusResult() {
 		/*
 		 * * Get Route get all bus route numbers and populate check boxes need
 		 * to be refactored.
 		 */
 
 		BusStop aBusStop = new BusStop();
-		aBusStop.StopCode = String.valueOf(busStopCode);
+		aBusStop.setStopCode (String.valueOf(busStopCode));
 		aBusList = new ArrayList<Bus>();
 		try {
 
@@ -232,7 +237,7 @@ public class SearchResultActivity extends Activity {
 		return aTextView;
 	}
 
-	/** This function add the data to the table **/
+	/** This function adds bus schedule data to the table **/
 	public void addData(List<Bus> aBusList) {
 		for (Bus aBus : aBusList) {
 
@@ -240,16 +245,16 @@ public class SearchResultActivity extends Activity {
 			tr = new TableRow(this);
 
 			/** Creating a TextView to add to the row **/
-			tr.addView(getTDTextView(aBus.RouteNo, 0f)); // Adding textView to
+			tr.addView(getTDTextView(aBus.getRouteNo(), 0f)); // Adding textView to
 															// tablerow.
 
 			/** Creating Time textview **/
 			tr.addView(getTDTextView(
-					"In " + Integer.toString(aBus.AdjustedScheduleTime)
+					"In " + Integer.toString(aBus.getAdjustedScheduleTime())
 							+ " mins  ", 0f));
 
 			/** Creating another textview **/
-			tr.addView(getTDTextView(aBus.Destination, 1f));
+			tr.addView(getTDTextView(aBus.getDestination(), 1f));
 
 			// Add the TableRow to the TableLayout
 			tl.addView(tr, new TableLayout.LayoutParams(
@@ -317,31 +322,27 @@ public class SearchResultActivity extends Activity {
 					.permitAll().build();
 			StrictMode.setThreadPolicy(policy);
 
-			long busStopCode = getIntent().getLongExtra("stopId", -1);
-			ArrayList<String> routesList = getIntent().getStringArrayListExtra(
-					"routes");
+			busStopCode = getIntent().getLongExtra("stopId", -1);
+			routesList = getIntent().getStringArrayListExtra("routes");
 
 			if (busStopCode == -1) {
 				// Error
 				new OCUtility().showErrorMsg(this, "Error: Buss top is null.");
 			} else {
 
-				getBusResult(busStopCode, routesList);
-				setContentView(R.layout.table);
-				tl = (TableLayout) findViewById(R.id.maintable);
-				addHeaders();
-				addData(aBusList);
-
-				TextView searchTitle = (TextView) findViewById(R.id.searchPageTitle);
-				searchTitle.setText(getIntent().getExtras().getString(
-						"stopName"));
+				if(isFromCreate){
+					new LoadBusSchedule().execute();
+				};
+				
 			}
 		}
+		isFromCreate = false;
 		Log.i("Map.OnResume is called", "");
 	}
 
 	/* Check if network is available */
 	public boolean isOnline() {
+
 	    ConnectivityManager cm =
 	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -349,5 +350,33 @@ public class SearchResultActivity extends Activity {
 	        return true;
 	    }
 	    return false;
+	}
+	
+	private class LoadBusSchedule extends AsyncTask<Void, Void, Void> {
+
+		protected void onPostExecute(Void pvoid) {
+			setContentView(R.layout.table);
+			tl = (TableLayout) findViewById(R.id.maintable);
+			addHeaders();
+			addData(aBusList);
+
+			TextView searchTitle = (TextView) findViewById(R.id.searchPageTitle);
+			searchTitle.setText(getIntent().getExtras().getString(
+					"stopName"));
+			progress.dismiss();
+		}
+
+		@Override
+		protected void onPreExecute() {
+			progress = ProgressDialog.show(self, "Processing..", "Processing",
+					true);
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			getBusResult();
+			return null;
+		}
 	}
 }

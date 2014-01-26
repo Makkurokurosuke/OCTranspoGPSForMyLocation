@@ -21,7 +21,7 @@ import android.widget.SimpleAdapter;
 
 public class ListActivityMain extends ListActivity {
 
-	final Context self = this;
+	private final Context self = this;
 	private ProgressDialog progress;
 
 	@Override
@@ -63,7 +63,7 @@ public class ListActivityMain extends ListActivity {
 		data.add(tmp); // add the map to the list of Maps
 	}
 
-	@SuppressWarnings("unchecked")
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 

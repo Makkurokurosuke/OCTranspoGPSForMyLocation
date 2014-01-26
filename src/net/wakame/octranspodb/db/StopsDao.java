@@ -36,14 +36,14 @@ public static Cursor getAllStops(SQLiteDatabase db) {
 	  return db.rawQuery(sql, null);
 	}
 
-public static Cursor getStopsByLonLat(SQLiteDatabase db, double pLat, double pLon, double pProximity) {
+public static Cursor getStopsByLonLat(SQLiteDatabase db, double left, double top, double right, double bottom) {
 	  String sql = "SELECT *  FROM STOPS WHERE " + 
-			   COL_STOP_LAT  + " > " + ( pLat  - pProximity ) + " and " + 
-			   COL_STOP_LAT  + " < " + ( pLat  + pProximity )  + " and " + 
-			   COL_STOP_LON  + " > " + ( pLon - pProximity)  + " and " + 
-			   COL_STOP_LON  + " < " + ( pLon + pProximity);
+			   COL_STOP_LAT  + " > " + bottom + " and " + 
+			   COL_STOP_LAT  + " < " + top  + " and " + 
+			   COL_STOP_LON  + " > " + left + " and " + 
+			   COL_STOP_LON  + " < " + right;
 	  return db.rawQuery(sql, null);
-	}
+	}//double left, double top, double right, double  bottom
 
 public static Cursor getStopsByCode(SQLiteDatabase db, String pBusCode) {
 	  String sql = "SELECT *  FROM STOPS WHERE " + 
