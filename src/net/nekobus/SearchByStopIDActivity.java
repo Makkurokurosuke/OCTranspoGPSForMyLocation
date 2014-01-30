@@ -1,4 +1,4 @@
-package com.octranspogps;
+package net.nekobus;
 
 import net.wakame.octranspodb.db.DbHelper;
 
@@ -41,6 +41,8 @@ public class SearchByStopIDActivity extends Activity {
 		return true;
 	}
 
+
+	
 	public void callListRoute(View v) {
  		Intent intent = new Intent(self, ListRouteActivity.class);
 		EditText mEdit = (EditText) findViewById(R.id.et_bus_stop_number);

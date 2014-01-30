@@ -3,11 +3,7 @@ OCTranspoGPSForMyLocation
 
 
 ----------------------------------------------------------------------
-
-There are already many nice applications to track Ottawa buses, 
-but I couldn't find any apps that allow us to search more than one bus route at the same time. 
-
-So, I created this for my convenience.
+This application finds your location and find bus stops near you. Also, it will show you next comming buses for the routes you select.
 
 Note: Google API key and OC Transpo API key are removed from the source code. 
 
@@ -27,7 +23,7 @@ Step 2: Press Search by my location.
 ![screen shot of the menu](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_2.png)
 
 
-Step 3: Press the my location button on the top right corner. (It will get your location without pressing the button, but it takes time.) Press a bus stop marker.
+Step 3: Press the my location button on the top right corner. Press a bus stop marker.
 
 
 ![screen shot of the map](https://raw.github.com/Makkurokurosuke/OCTranspoGPSForMyLocation/master/screenshot/Screenshot_3.png)
@@ -58,11 +54,11 @@ Step 5: Now you see a list of bus route schedules. You can know which one comes 
 
 
 
-<b>My future plan - There is still a lot to add and fix.</b>
+<b>My future plan - There is still a lot to add.</b>
 <ul>
-<li>Add better exception error handling</li>
-<li>Add an option to keep updaing the result every minute for the next 5 minutes</li>
-<li>Add a loading message while processing</li>
+<li>Add better expected error handling</li>
+<li>Add an option to refresh and keep updaing the result every minute for the next 5 minutes</li>
+<li>Add an option to search from previous search criteria</li>
 <li>Update bus stop location, because it may be old</li>
 <li>Test more</li>
 </ul>

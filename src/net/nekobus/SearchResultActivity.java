@@ -1,4 +1,4 @@
-package com.octranspogps;
+package net.nekobus;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -352,6 +352,17 @@ public class SearchResultActivity extends Activity {
 	    return false;
 	}
 	
+
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (progress.isShowing()){
+			progress.dismiss();
+		}
+		Log.i("onPause is called", "");
+	}
+	
 	private class LoadBusSchedule extends AsyncTask<Void, Void, Void> {
 
 		protected void onPostExecute(Void pvoid) {
@@ -363,13 +374,17 @@ public class SearchResultActivity extends Activity {
 			TextView searchTitle = (TextView) findViewById(R.id.searchPageTitle);
 			searchTitle.setText(getIntent().getExtras().getString(
 					"stopName"));
-			progress.dismiss();
+			if (progress.isShowing()){
+				progress.dismiss();
+			}
 		}
 
 		@Override
 		protected void onPreExecute() {
-			progress = ProgressDialog.show(self, "Processing..", "Processing",
+			//if (!progress.isShowing()){
+				progress = ProgressDialog.show(self, "Processing..", "Processing",
 					true);
+			//}
 			super.onPreExecute();
 		}
 

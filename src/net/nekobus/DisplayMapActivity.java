@@ -1,10 +1,12 @@
-package com.octranspogps;
+package net.nekobus;
 
 import java.util.List;
 
 import com.octranspoBLL.BusStop;
 import com.octranspoBLL.OCUtility;
-import com.octranspogps.R;
+
+import net.nekobus.R;
+
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,7 +59,7 @@ public class DisplayMapActivity extends FragmentActivity {
 		});
 
 		setContentView(R.layout.activity_main);
-
+		
 	}
 
 	private void displayMap(String provider, LocationManager locationManager) {
@@ -207,6 +209,7 @@ public class DisplayMapActivity extends FragmentActivity {
 		Log.i("Map.OnResume is called", "");
 	}
 
+
 	@Override
 	public void onRestart() {
 		super.onRestart();
@@ -261,9 +264,11 @@ public class DisplayMapActivity extends FragmentActivity {
 	}
 
 	void handleMyLocation() {
-
+		if (map == null){
 		map = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
+		}
+		
 		if (map == null) {
 			// Error: Google Map is not available
 			new OCUtility().showErrorMsg(self, "Google Map is null!");

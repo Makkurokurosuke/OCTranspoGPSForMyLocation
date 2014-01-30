@@ -1,10 +1,11 @@
-package com.octranspogps;
+package net.nekobus;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 import javax.xml.parsers.DocumentBuilder;
@@ -31,6 +32,7 @@ import org.xml.sax.SAXException;
 import com.octranspoBLL.Bus;
 import com.octranspoBLL.BusStop;
 import com.octranspoBLL.OCUtility;
+
 
 
 import android.app.Activity;
@@ -62,7 +64,6 @@ public class ListRouteActivity extends Activity {
 	private long busStopCode;
 	private BusStop aBusStop;
 	private ProgressDialog progress;
-	private boolean isfromCreate = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,30 @@ public class ListRouteActivity extends Activity {
 
 			}
 		});
-		isfromCreate = true;
+		if (!isOnline()) {
+			// network is not available
+			// show dialog and return to list activity
+			AlertDialog.Builder builder = new AlertDialog.Builder(self);
+			builder.setMessage("Network Provider is not available. Enable the location setting.");
+			builder.setCancelable(false).setPositiveButton(android.R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							
+						}
+					});
+			builder.create().show();
+		} else {
+			busStopCode = getIntent().getLongExtra("stopId", -1);
+
+			if (busStopCode == -1) {
+				// Error
+				new OCUtility().showErrorMsg(self,"Bus Stop Code is null.");
+			} else {
+
+					displayRoutesList();
+
+			}
+		}
 	}
 
 	/* Get the selected bus id and get list of bus route numbers from OC Transpo */
@@ -92,7 +116,14 @@ public class ListRouteActivity extends Activity {
 		StrictMode.setThreadPolicy(policy);
 
 		new LoadRoutesTask().execute();	
-	
+		/* getBusRoutes();
+		 
+		 TextView searchTitle = (TextView) findViewById(R.id.searchPageTitle);
+			searchTitle.setText(aBusStop.getStopName() + " ("
+					+ aBusStop.getStopCode() + ")");
+			boxAdapter = new ListAdapter(self, listOfBus);
+			ListView lvMain = (ListView) findViewById(R.id.lvMain);
+			lvMain.setAdapter(boxAdapter);*/
 	}
 
 	/* Check if network is available */
@@ -104,7 +135,89 @@ public class ListRouteActivity extends Activity {
 		}
 		return false;
 	}
+	
+	private void getBusRoutes(){
+	aBusStop.setStopCode(String.valueOf(busStopCode));
 
+	HttpClient client = new DefaultHttpClient();
+	HttpPost post = new HttpPost(getString(R.string.route_summary_URL));
+	List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+	pairs.add(new BasicNameValuePair("appID", getString(R.string.ocAppID)));
+	pairs.add(new BasicNameValuePair("apiKey", getString(R.string.ocAppKey)));
+	pairs.add(new BasicNameValuePair("stopNo", String.valueOf(busStopCode)));
+
+	try {
+
+		post.setEntity(new UrlEncodedFormEntity(pairs));
+		// If Internet is disabled, UnknownHostException occurs here.
+		HttpResponse response = client.execute(post);
+		HttpEntity r_entity = response.getEntity();
+		String xmlString = EntityUtils.toString(r_entity, "UTF-8");
+		DocumentBuilderFactory factory = DocumentBuilderFactory
+				.newInstance();
+		DocumentBuilder db = factory.newDocumentBuilder();
+
+		InputSource inStream = new InputSource();
+		inStream.setEncoding("UTF-8");
+		inStream.setCharacterStream(new StringReader(xmlString));
+		Document doc = db.parse(inStream);
+
+		NodeList nl = doc.getElementsByTagName(stopDescription);
+		for (int i = 0; i < nl.getLength(); i++) {
+			if (nl.item(i).getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+				Element nameElement = (Element) nl.item(i);
+				aBusStop.setStopName(nameElement.getFirstChild()
+						.getNodeValue().trim());
+			}
+		}
+
+		NodeList nlr = doc.getElementsByTagName(route);
+		for (int i = 0; i < nlr.getLength(); i++) {
+			Node nNode = nlr.item(i);
+			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) nlr.item(i);
+				// change to load to list of busses Bus.RouteNo
+				Bus aBus = new Bus();
+				String curRouteNo = eElement.getElementsByTagName(routeNo)
+						.item(0).getChildNodes().item(0).getNodeValue()
+						.trim();
+				String curDestination = eElement
+						.getElementsByTagName(routeHeading).item(0)
+						.getChildNodes().item(0).getNodeValue().trim();
+				String curDirection = eElement
+						.getElementsByTagName(direction).item(0)
+						.getChildNodes().item(0).getNodeValue().trim();
+
+				aBus.setRouteNo(curRouteNo);
+				aBus.setDestination(curDestination);
+				aBus.setDirection(curDirection);
+				listOfBus.add(aBus);
+
+			}
+		}
+
+
+
+	} catch (UnsupportedEncodingException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ClientProtocolException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (ParserConfigurationException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (SAXException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+
+}
 	/* OnClick Search button event */
 	public void showResult(View v) {
 		List<String> routesList = new ArrayList<String>();
@@ -151,34 +264,19 @@ public class ListRouteActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 
-		if (!isOnline()) {
-			// network is not available
-			// show dialog and return to list activity
-			AlertDialog.Builder builder = new AlertDialog.Builder(self);
-			builder.setMessage("Network Provider is not available. Enable the location setting.");
-			builder.setCancelable(false).setPositiveButton(android.R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							startActivity(new Intent(self,
-									ListActivityMain.class));
-						}
-					});
-			builder.create().show();
-		} else {
-			busStopCode = getIntent().getLongExtra("stopId", -1);
-
-			if (busStopCode == -1) {
-				// Error
-			} else {
-				if (isfromCreate){
-					displayRoutesList();
-				}
-			}
-		}
-		isfromCreate = false;
+		
 		Log.i("Map.OnResume is called", "");
 	}
 
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (progress.isShowing()){
+			progress.dismiss();
+		}
+		Log.i("onPause is called", "");
+	}
 	
 	private class LoadRoutesTask extends AsyncTask<Void, Void, Void> {
 
@@ -190,7 +288,9 @@ public class ListRouteActivity extends Activity {
 			boxAdapter = new ListAdapter(self, listOfBus);
 			ListView lvMain = (ListView) findViewById(R.id.lvMain);
 			lvMain.setAdapter(boxAdapter);
-			progress.dismiss();
+			if (progress.isShowing()){
+				progress.dismiss();
+			}
 		}
 
 		@Override
@@ -205,86 +305,7 @@ public class ListRouteActivity extends Activity {
 			/*
 			 * * Get Route get all bus route numbers and populate check boxes
 			 */
-			aBusStop.setStopCode(String.valueOf(busStopCode));
-
-			HttpClient client = new DefaultHttpClient();
-			HttpPost post = new HttpPost(getString(R.string.route_summary_URL));
-			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-			pairs.add(new BasicNameValuePair("appID", getString(R.string.ocAppID)));
-			pairs.add(new BasicNameValuePair("apiKey", getString(R.string.ocAppKey)));
-			pairs.add(new BasicNameValuePair("stopNo", String.valueOf(busStopCode)));
-
-			try {
-
-				post.setEntity(new UrlEncodedFormEntity(pairs));
-				// If Internet is disabled, UnknownHostException occurs here.
-				HttpResponse response = client.execute(post);
-				HttpEntity r_entity = response.getEntity();
-				String xmlString = EntityUtils.toString(r_entity, "UTF-8");
-				DocumentBuilderFactory factory = DocumentBuilderFactory
-						.newInstance();
-				DocumentBuilder db = factory.newDocumentBuilder();
-
-				InputSource inStream = new InputSource();
-				inStream.setEncoding("UTF-8");
-				inStream.setCharacterStream(new StringReader(xmlString));
-				Document doc = db.parse(inStream);
-
-				NodeList nl = doc.getElementsByTagName(stopDescription);
-				for (int i = 0; i < nl.getLength(); i++) {
-					if (nl.item(i).getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-						Element nameElement = (Element) nl.item(i);
-						aBusStop.setStopName(nameElement.getFirstChild()
-								.getNodeValue().trim());
-					}
-				}
-
-				NodeList nlr = doc.getElementsByTagName(route);
-				for (int i = 0; i < nlr.getLength(); i++) {
-					Node nNode = nlr.item(i);
-					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-						Element eElement = (Element) nlr.item(i);
-						// change to load to list of busses Bus.RouteNo
-						Bus aBus = new Bus();
-						String curRouteNo = eElement.getElementsByTagName(routeNo)
-								.item(0).getChildNodes().item(0).getNodeValue()
-								.trim();
-						String curDestination = eElement
-								.getElementsByTagName(routeHeading).item(0)
-								.getChildNodes().item(0).getNodeValue().trim();
-						String curDirection = eElement
-								.getElementsByTagName(direction).item(0)
-								.getChildNodes().item(0).getNodeValue().trim();
-
-						aBus.setRouteNo(curRouteNo);
-						aBus.setDestination(curDestination);
-						aBus.setDirection(curDirection);
-						listOfBus.add(aBus);
-
-					}
-				}
-
-
-
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
+			getBusRoutes();
 			return null;
 		}
 	}

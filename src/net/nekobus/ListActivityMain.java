@@ -1,4 +1,4 @@
-package com.octranspogps;
+package net.nekobus;
 
 //import android.app.Activity;
 import android.os.AsyncTask;
@@ -81,8 +81,9 @@ public class ListActivityMain extends ListActivity {
 		}
 
 		protected void onPostExecute(Void pvoid) {
-
-			progress.dismiss();
+			if (progress.isShowing()){
+				progress.dismiss();
+			}
 		}
 
 		@Override
@@ -108,6 +109,16 @@ public class ListActivityMain extends ListActivity {
 		}
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (progress.isShowing()){
+			progress.dismiss();
+		}
+		Log.i("onPause is called", "");
+	}
+	
+	
 	public void onDestroy(Bundle savedInstanceState) {
 		super.onDestroy();
 	}

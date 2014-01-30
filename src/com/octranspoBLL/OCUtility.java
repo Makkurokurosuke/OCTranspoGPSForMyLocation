@@ -30,7 +30,7 @@ public class OCUtility {
 		} else if (pErrorNum == 2) {
 			errorMsg = "Please enter a bus stop number!";
 		} else if (pErrorNum == 3) {
-			errorMsg = "Satelite couldn't locate your location. Wait for a few seconds and try again! This could take about 10 seconds.";
+			errorMsg = "Satelite couldn't locate your location. Wait for a few more seconds and try again! This could take about 40 seconds.";
 		} else if (pErrorNum == 4) {
 			errorMsg = "Unable to get the previous location. Press the current location button.";
 		} else if (pErrorNum == 5) {
