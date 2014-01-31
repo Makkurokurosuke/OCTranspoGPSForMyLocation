@@ -3,7 +3,7 @@ OCTranspoGPSForMyLocation
 
 
 ----------------------------------------------------------------------
-This application finds your location and find bus stops near you. Also, it will show you next comming buses for the routes you select.
+This application finds your location and find bus stops near you. Also, it will show you next coming buses for the routes you select.
 
 Note: Google API key and OC Transpo API key are removed from the source code. 
 
