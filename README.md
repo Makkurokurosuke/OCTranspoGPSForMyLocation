@@ -54,10 +54,3 @@ Step 5: Now you see a list of bus route schedules. You can know which one comes 
 
 
 
-<b>My future plan - There is still a lot to add.</b>
-<ul>
-<li>Add an option to refresh and keep updaing the result every minute for the next 5 minutes</li>
-<li>Add an option to search from previous search criteria</li>
-<li>Update bus stop location, because it may be old</li>
-<li>Test more</li>
-</ul>
